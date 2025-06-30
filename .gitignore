@@ -1,0 +1,50 @@
+# Ignore compiled class files
+*.class
+
+# Ignore build folders (Eclipse / IntelliJ / general)
+bin/
+build/
+out/
+
+# Ignore IDE-specific files
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore logs
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore library jars if you store them locally and don't want to commit
+/lib/*.jar
+
+# Ignore temporary files
+*.tmp
+*.swp
+*~
+
+# Ignore database files if any local DB used (optional)
+/*.db
+
+# Ignore config files with sensitive data if applicable
+/config/hibernate.cfg.xml  # Only if you store sensitive info there; otherwise keep it
+
