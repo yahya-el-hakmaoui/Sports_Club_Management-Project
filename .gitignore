@@ -48,3 +48,4 @@ Thumbs.db
 # Ignore config files with sensitive data if applicable
 /config/hibernate.cfg.xml  # Only if you store sensitive info there; otherwise keep it
 
+/src/main/resources/hibernate.cfg.xml
