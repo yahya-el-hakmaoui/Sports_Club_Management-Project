@@ -49,3 +49,5 @@ Thumbs.db
 /config/hibernate.cfg.xml  # Only if you store sensitive info there; otherwise keep it
 
 /src/main/resources/hibernate.cfg.xml
+
+hibernate.cfg.xml
