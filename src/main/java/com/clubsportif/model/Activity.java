@@ -2,6 +2,8 @@ package com.clubsportif.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "activities")
@@ -23,6 +25,22 @@ public class Activity implements Serializable {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    // Relation avec inscriptions (1 activité -> plusieurs inscriptions)
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Inscription> inscriptions = new HashSet<>();
+
+    // Constructeur par défaut requis par Hibernate
+    public Activity() {
+    }
+
+    // Constructeur avec tous les champs (sauf inscriptions)
+    public Activity(String nom, double tarif, Integer maxParticipants, String description) {
+        this.nom = nom;
+        this.tarif = tarif;
+        this.maxParticipants = maxParticipants;
+        this.description = description;
+    }
 
     // --- Getters and Setters ---
 
@@ -64,5 +82,25 @@ public class Activity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<Inscription> getInscriptions() {
+        return inscriptions;
+    }
+
+    public void setInscriptions(Set<Inscription> inscriptions) {
+        this.inscriptions = inscriptions;
+    }
+
+    // Ajout et suppression pratiques pour maintenir la relation bidirectionnelle
+
+    public void addInscription(Inscription inscription) {
+        inscriptions.add(inscription);
+        inscription.setActivity(this);
+    }
+
+    public void removeInscription(Inscription inscription) {
+        inscriptions.remove(inscription);
+        inscription.setActivity(null);
     }
 }

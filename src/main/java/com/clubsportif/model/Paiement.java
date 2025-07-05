@@ -36,7 +36,6 @@ public class Paiement {
     @Column(name = "date_paiement")
     private LocalDate datePaiement;
 
-    // Enum pour le statut de paiement
     public enum StatutPaiement {
         paye,
         impaye,
@@ -45,6 +44,18 @@ public class Paiement {
 
     // Constructeur par défaut
     public Paiement() {
+    }
+
+    // Constructeur avec tous les champs sauf paiementId
+    public Paiement(User user, LocalDate periodeDebut, LocalDate periodeFin, BigDecimal montant,
+                    StatutPaiement statut, BigDecimal montantPartiel, LocalDate datePaiement) {
+        this.user = user;
+        this.periodeDebut = periodeDebut;
+        this.periodeFin = periodeFin;
+        this.montant = montant;
+        this.statut = statut;
+        this.montantPartiel = montantPartiel;
+        this.datePaiement = datePaiement;
     }
 
     // Getters et setters

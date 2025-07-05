@@ -24,6 +24,12 @@ public class ParametresPaiement {
     // Constructeur par défaut
     public ParametresPaiement() {}
 
+    // Constructeur avec paramètres
+    public ParametresPaiement(Double fraisBaseAnnuel, Double fraisBaseMensuel) {
+        this.fraisBaseAnnuel = fraisBaseAnnuel;
+        this.fraisBaseMensuel = fraisBaseMensuel;
+    }
+
     // Getters et Setters
 
     public Integer getId() {

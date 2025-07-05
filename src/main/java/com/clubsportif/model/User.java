@@ -2,6 +2,8 @@ package com.clubsportif.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -9,7 +11,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int user_id;
+    @Column(name = "user_id")
+    private int userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -31,35 +34,67 @@ public class User {
     private String email;
 
     private String telephone;
+
     private String adresse;
 
+    @Column(name = "date_naissance")
     @Temporal(TemporalType.DATE)
-    private Date date_naissance;
+    private Date dateNaissance;
 
+    @Column(name = "date_inscription", nullable = false)
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
-    private Date date_inscription;
+    private Date dateInscription;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_modification")
-    private Date date_modification;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateModification;
 
     @Column(nullable = false)
     private boolean archived = false;
 
-    // Enumération des rôles possibles
+    // Relations
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Paiement> paiements = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inscription> inscriptions = new HashSet<>();
+
     public enum Role {
         admin, adherent, assistant
     }
 
-    // Getters et Setters
+    // ======= Constructeurs =======
 
-    public int getUser_id() {
-        return user_id;
+    public User() {
+        // Constructeur sans argument requis par Hibernate
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public User(String username, String passwordHash, Role role, String nom, String prenom,
+                String email, String telephone, String adresse, Date dateNaissance,
+                Date dateInscription, Date dateModification, boolean archived) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.telephone = telephone;
+        this.adresse = adresse;
+        this.dateNaissance = dateNaissance;
+        this.dateInscription = dateInscription;
+        this.dateModification = dateModification;
+        this.archived = archived;
+    }
+
+    // ======= Getters et Setters =======
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -126,28 +161,28 @@ public class User {
         this.adresse = adresse;
     }
 
-    public Date getDate_naissance() {
-        return date_naissance;
+    public Date getDateNaissance() {
+        return dateNaissance;
     }
 
-    public void setDate_naissance(Date date_naissance) {
-        this.date_naissance = date_naissance;
+    public void setDateNaissance(Date dateNaissance) {
+        this.dateNaissance = dateNaissance;
     }
 
-    public Date getDate_inscription() {
-        return date_inscription;
+    public Date getDateInscription() {
+        return dateInscription;
     }
 
-    public void setDate_inscription(Date date_inscription) {
-        this.date_inscription = date_inscription;
+    public void setDateInscription(Date dateInscription) {
+        this.dateInscription = dateInscription;
     }
 
-    public Date getDate_modification() {
-        return date_modification;
+    public Date getDateModification() {
+        return dateModification;
     }
 
-    public void setDate_modification(Date date_modification) {
-        this.date_modification = date_modification;
+    public void setDateModification(Date dateModification) {
+        this.dateModification = dateModification;
     }
 
     public boolean isArchived() {
@@ -156,5 +191,21 @@ public class User {
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public Set<Paiement> getPaiements() {
+        return paiements;
+    }
+
+    public void setPaiements(Set<Paiement> paiements) {
+        this.paiements = paiements;
+    }
+
+    public Set<Inscription> getInscriptions() {
+        return inscriptions;
+    }
+
+    public void setInscriptions(Set<Inscription> inscriptions) {
+        this.inscriptions = inscriptions;
     }
 }

@@ -26,7 +26,17 @@ public class Inscription {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
-    // ======= Getters and Setters =======
+    public Inscription() {
+    }
+
+    public Inscription(User user, Activity activity, LocalDate dateInscription, boolean active) {
+        this.user = user;
+        this.activity = activity;
+        this.dateInscription = dateInscription;
+        this.active = active;
+    }
+
+    // Getters and Setters
 
     public int getId() {
         return id;
@@ -68,4 +78,3 @@ public class Inscription {
         this.active = active;
     }
 }
-
