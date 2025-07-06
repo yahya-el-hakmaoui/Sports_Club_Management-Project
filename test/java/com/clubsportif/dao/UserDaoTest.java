@@ -36,8 +36,8 @@ public class UserDaoTest {
         user.setUsername("testuser");
         user.setPasswordHash("hashedpwd");
         user.setRole(Role.adherent);
-        user.setNom("Dupont");
-        user.setPrenom("Jean");
+        user.setLastname("Dupont");
+        user.setName("Jean");
         user.setEmail("jean.dupont@example.com");
         user.setDateInscription(LocalDate.now());
         user.setArchived(false);
@@ -61,19 +61,19 @@ public class UserDaoTest {
         user.setUsername("updateuser");
         user.setPasswordHash("pwd");
         user.setRole(Role.adherent);
-        user.setNom("Martin");
-        user.setPrenom("Paul");
+        user.setLastname("Martin");
+        user.setName("Paul");
         user.setDateInscription(LocalDate.now());
         user.setArchived(false);
 
         userDao.createUser(user);
         assertTrue(user.getUserId() > 0);
 
-        user.setNom("MartinUpdated");
+        user.setLastname("MartinUpdated");
         userDao.updateUser(user);
 
         User updated = userDao.findById(user.getUserId());
-        assertEquals("MartinUpdated", updated.getNom());
+        assertEquals("MartinUpdated", updated.getLastname());
 
         userDao.deleteUser(updated);
     }
@@ -86,8 +86,8 @@ public class UserDaoTest {
         user1.setUsername("user1");
         user1.setPasswordHash("pwd1");
         user1.setRole(Role.adherent);
-        user1.setNom("UserOne");
-        user1.setPrenom("PrenomOne");
+        user1.setLastname("UserOne");
+        user1.setName("PrenomOne");
         user1.setDateInscription(LocalDate.now());
         user1.setArchived(false);
 
@@ -95,8 +95,8 @@ public class UserDaoTest {
         user2.setUsername("user2");
         user2.setPasswordHash("pwd2");
         user2.setRole(Role.adherent);
-        user2.setNom("UserTwo");
-        user2.setPrenom("PrenomTwo");
+        user2.setLastname("UserTwo");
+        user2.setName("PrenomTwo");
         user2.setDateInscription(LocalDate.now());
         user2.setArchived(true);
 
@@ -124,8 +124,8 @@ public class UserDaoTest {
         user.setUsername("searchuser");
         user.setPasswordHash("pwd");
         user.setRole(Role.adherent);
-        user.setNom("Lemoine");
-        user.setPrenom("Sylvie");
+        user.setLastname("Lemoine");
+        user.setName("Sylvie");
         user.setDateInscription(LocalDate.now());
         user.setArchived(false);
 
@@ -140,4 +140,34 @@ public class UserDaoTest {
 
         userDao.deleteUser(user);
     }
+
+    @Test
+    public void testFindByUsername() {
+        assertTrue(HibernateUtil.getSessionFactory().isOpen(), "SessionFactory should be open");
+
+        User user = new User();
+        user.setUsername("uniqueuser");
+        user.setPasswordHash("pwd123");
+        user.setRole(Role.adherent);
+        user.setLastname("TestNom");
+        user.setName("TestPrenom");
+        user.setEmail("uniqueuser@example.com");
+        user.setDateInscription(LocalDate.now());
+        user.setArchived(false);
+
+        userDao.createUser(user);
+        assertTrue(user.getUserId() > 0);
+
+        User found = userDao.findByUsername("uniqueuser");
+        assertNotNull(found, "User should be found by username");
+        assertEquals(user.getUserId(), found.getUserId(), "Found user ID should match");
+
+        // Case-insensitive check
+        User foundLower = userDao.findByUsername("UNIQUEUSER");
+        assertNotNull(foundLower, "User should be found case-insensitively");
+        assertEquals(user.getUserId(), foundLower.getUserId(), "Case-insensitive match should return correct user");
+
+        userDao.deleteUser(found);
+    }
+
 }

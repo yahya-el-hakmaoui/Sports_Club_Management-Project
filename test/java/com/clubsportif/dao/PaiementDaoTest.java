@@ -48,8 +48,8 @@ class PaiementDaoTest {
             testUser.setUsername("junit_user");
             testUser.setPasswordHash("securepassword");
             testUser.setRole(User.Role.adherent);
-            testUser.setNom("Dupont");
-            testUser.setPrenom("Jean");
+            testUser.setLastname("Dupont");
+            testUser.setName("Jean");
             testUser.setEmail("junit@example.com");
             testUser.setTelephone("0612345678");
             testUser.setAdresse("12 rue des tests");

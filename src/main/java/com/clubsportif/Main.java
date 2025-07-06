@@ -1,18 +1,24 @@
 package com.clubsportif;
 
-import com.clubsportif.dao.*;
+// model,dao,ui imports
 import com.clubsportif.model.*;
-import com.clubsportif.model.User.Role;
 
-// for types
+// swing imports
+
+// util imports
+import com.clubsportif.service.AuthService;
+import com.clubsportif.service.UserService;
+import com.clubsportif.util.PasswordUtils;
+
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+
+// types imports
+
 
 public class Main {
 
     public static void main(String[] args) {
-        UserDao userDao = new UserDao();
+
 
 
 

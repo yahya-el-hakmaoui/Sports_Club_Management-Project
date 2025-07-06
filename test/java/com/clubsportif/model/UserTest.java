@@ -37,8 +37,8 @@ public class UserTest {
         assertEquals("johndoe", user.getUsername());
         assertEquals("hashed_password", user.getPasswordHash());
         assertEquals(User.Role.adherent, user.getRole());
-        assertEquals("Doe", user.getNom());
-        assertEquals("John", user.getPrenom());
+        assertEquals("Doe", user.getLastname());
+        assertEquals("John", user.getName());
         assertEquals("john.doe@example.com", user.getEmail());
         assertEquals("0600000000", user.getTelephone());
         assertEquals("123 Rue Exemple", user.getAdresse());
@@ -49,8 +49,8 @@ public class UserTest {
 
     @Test
     public void testSettersAndGetters() {
-        user.setNom("Martin");
-        assertEquals("Martin", user.getNom());
+        user.setLastname("Martin");
+        assertEquals("Martin", user.getLastname());
 
         user.setRole(User.Role.admin);
         assertEquals(User.Role.admin, user.getRole());

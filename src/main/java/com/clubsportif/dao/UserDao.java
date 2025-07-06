@@ -86,7 +86,7 @@ public class UserDao {
     // Rechercher un utilisateur par nom (partiel, insensible à la casse)
     public List<User> findByName(String namePart) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM User WHERE LOWER(nom) LIKE :name";
+            String hql = "FROM User WHERE LOWER(lastname) LIKE :name";
             Query<User> query = session.createQuery(hql, User.class);
             query.setParameter("name", "%" + namePart.toLowerCase() + "%");
             return query.getResultList();
@@ -96,10 +96,20 @@ public class UserDao {
     // Rechercher un utilisateur par prénom (partiel, insensible à la casse)
     public List<User> findByLastname(String lastnamePart) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM User WHERE LOWER(prenom) LIKE :lastname";
+            String hql = "FROM User WHERE LOWER(name) LIKE :lastname";
             Query<User> query = session.createQuery(hql, User.class);
             query.setParameter("lastname", "%" + lastnamePart.toLowerCase() + "%");
             return query.getResultList();
+        }
+    }
+
+    // Rechercher un utilisateur par nom d'utilisateur (exact, insensible à la casse)
+    public User findByUsername(String username) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM User WHERE LOWER(username) = :username";
+            Query<User> query = session.createQuery(hql, User.class);
+            query.setParameter("username", username.toLowerCase());
+            return query.uniqueResult();
         }
     }
 }

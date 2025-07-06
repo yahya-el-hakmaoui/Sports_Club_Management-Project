@@ -25,11 +25,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
-    private String nom;
+    @Column(name = "nom", nullable = false)
+    private String lastname;
 
-    @Column(nullable = false)
-    private String prenom;
+    @Column(name = "prenom", nullable = false)
+    private String name;
 
     @Column(unique = true)
     private String email;
@@ -74,8 +74,8 @@ public class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
-        this.nom = nom;
-        this.prenom = prenom;
+        this.lastname = nom;
+        this.name = prenom;
         this.email = email;
         this.telephone = telephone;
         this.adresse = adresse;
@@ -119,20 +119,20 @@ public class User {
         this.role = role;
     }
 
-    public String getNom() {
-        return nom;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setLastname(String nom) {
+        this.lastname = nom;
     }
 
-    public String getPrenom() {
-        return prenom;
+    public String getName() {
+        return name;
     }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setName(String prenom) {
+        this.name = prenom;
     }
 
     public String getEmail() {

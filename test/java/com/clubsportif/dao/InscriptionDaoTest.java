@@ -33,8 +33,8 @@ public class InscriptionDaoTest {
             testUser.setUsername("testuser");
             testUser.setPasswordHash("testpassword");
             testUser.setRole(User.Role.valueOf("adherent"));
-            testUser.setNom("Test");
-            testUser.setPrenom("User");
+            testUser.setLastname("Test");
+            testUser.setName("User");
             testUser.setDateInscription(LocalDate.now());
             session.persist(testUser);
 
