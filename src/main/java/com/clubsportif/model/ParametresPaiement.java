@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "parametres_paiement")
@@ -13,46 +14,47 @@ public class ParametresPaiement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "parametres_paiement_id")
+    private Integer parametresPaiementId;
 
     @Column(name = "frais_base_annuel", nullable = false, precision = 8, scale = 2)
-    private Double fraisBaseAnnuel;
+    private BigDecimal fraisBaseAnnuel;
 
     @Column(name = "frais_base_mensuel", nullable = false, precision = 8, scale = 2)
-    private Double fraisBaseMensuel;
+    private BigDecimal fraisBaseMensuel;
 
     // Constructeur par défaut
     public ParametresPaiement() {}
 
     // Constructeur avec paramètres
-    public ParametresPaiement(Double fraisBaseAnnuel, Double fraisBaseMensuel) {
+    public ParametresPaiement(BigDecimal fraisBaseAnnuel, BigDecimal fraisBaseMensuel) {
         this.fraisBaseAnnuel = fraisBaseAnnuel;
         this.fraisBaseMensuel = fraisBaseMensuel;
     }
 
     // Getters et Setters
 
-    public Integer getId() {
-        return id;
+    public Integer getParametresPaiementId() {
+        return parametresPaiementId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setParametresPaiementId(Integer id) {
+        this.parametresPaiementId = id;
     }
 
-    public Double getFraisBaseAnnuel() {
+    public BigDecimal getFraisBaseAnnuel() {
         return fraisBaseAnnuel;
     }
 
-    public void setFraisBaseAnnuel(Double fraisBaseAnnuel) {
+    public void setFraisBaseAnnuel(BigDecimal fraisBaseAnnuel) {
         this.fraisBaseAnnuel = fraisBaseAnnuel;
     }
 
-    public Double getFraisBaseMensuel() {
+    public BigDecimal getFraisBaseMensuel() {
         return fraisBaseMensuel;
     }
 
-    public void setFraisBaseMensuel(Double fraisBaseMensuel) {
+    public void setFraisBaseMensuel(BigDecimal fraisBaseMensuel) {
         this.fraisBaseMensuel = fraisBaseMensuel;
     }
 }

@@ -2,6 +2,7 @@ package com.clubsportif.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Activity implements Serializable {
     private String nom;
 
     @Column(name = "tarif", nullable = false, precision = 8, scale = 2)
-    private double tarif;
+    private BigDecimal tarif;
 
     @Column(name = "max_participants")
     private Integer maxParticipants;
@@ -35,7 +36,7 @@ public class Activity implements Serializable {
     }
 
     // Constructeur avec tous les champs (sauf inscriptions)
-    public Activity(String nom, double tarif, Integer maxParticipants, String description) {
+    public Activity(String nom, BigDecimal tarif, Integer maxParticipants, String description) {
         this.nom = nom;
         this.tarif = tarif;
         this.maxParticipants = maxParticipants;
@@ -60,11 +61,11 @@ public class Activity implements Serializable {
         this.nom = nom;
     }
 
-    public double getTarif() {
+    public BigDecimal getTarif() {
         return tarif;
     }
 
-    public void setTarif(double tarif) {
+    public void setTarif(BigDecimal tarif) {
         this.tarif = tarif;
     }
 

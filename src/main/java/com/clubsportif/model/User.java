@@ -1,7 +1,8 @@
 package com.clubsportif.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,16 +39,13 @@ public class User {
     private String adresse;
 
     @Column(name = "date_naissance")
-    @Temporal(TemporalType.DATE)
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
 
     @Column(name = "date_inscription", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date dateInscription;
+    private LocalDate dateInscription;
 
     @Column(name = "date_modification")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateModification;
+    private LocalDateTime dateModification;
 
     @Column(nullable = false)
     private boolean archived = false;
@@ -64,15 +62,15 @@ public class User {
         admin, adherent, assistant
     }
 
-    // ======= Constructeurs =======
+    // ======= Constructors =======
 
     public User() {
-        // Constructeur sans argument requis par Hibernate
+        // Hibernate requires no-arg constructor
     }
 
     public User(String username, String passwordHash, Role role, String nom, String prenom,
-                String email, String telephone, String adresse, Date dateNaissance,
-                Date dateInscription, Date dateModification, boolean archived) {
+                String email, String telephone, String adresse, LocalDate dateNaissance,
+                LocalDate dateInscription, LocalDateTime dateModification, boolean archived) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
@@ -87,7 +85,7 @@ public class User {
         this.archived = archived;
     }
 
-    // ======= Getters et Setters =======
+    // ======= Getters and Setters =======
 
     public int getUserId() {
         return userId;
@@ -161,27 +159,27 @@ public class User {
         this.adresse = adresse;
     }
 
-    public Date getDateNaissance() {
+    public LocalDate getDateNaissance() {
         return dateNaissance;
     }
 
-    public void setDateNaissance(Date dateNaissance) {
+    public void setDateNaissance(LocalDate dateNaissance) {
         this.dateNaissance = dateNaissance;
     }
 
-    public Date getDateInscription() {
+    public LocalDate getDateInscription() {
         return dateInscription;
     }
 
-    public void setDateInscription(Date dateInscription) {
+    public void setDateInscription(LocalDate dateInscription) {
         this.dateInscription = dateInscription;
     }
 
-    public Date getDateModification() {
+    public LocalDateTime getDateModification() {
         return dateModification;
     }
 
-    public void setDateModification(Date dateModification) {
+    public void setDateModification(LocalDateTime dateModification) {
         this.dateModification = dateModification;
     }
 

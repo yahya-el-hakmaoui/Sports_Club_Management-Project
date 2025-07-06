@@ -1,29 +1,20 @@
 package com.clubsportif;
-// our models
+
+import com.clubsportif.dao.*;
 import com.clubsportif.model.*;
-// for hibernate
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-// for swing
-import javax.swing.*;
-import java.awt.event.*;
+import com.clubsportif.model.User.Role;
+
 // for types
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 public class Main {
+
     public static void main(String[] args) {
-        SessionFactory factory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .buildSessionFactory();
+        UserDao userDao = new UserDao();
 
-        Session session = factory.openSession();
 
-        try {
 
-        } finally {
-            session.close();
-            factory.close();
-        }
     }
 }

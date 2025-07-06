@@ -10,7 +10,7 @@ public class Inscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inscription_id")
-    private int id;
+    private int inscriptionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -38,12 +38,12 @@ public class Inscription {
 
     // Getters and Setters
 
-    public int getId() {
-        return id;
+    public int getInscriptionId() {
+        return inscriptionId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setInscriptionId(int id) {
+        this.inscriptionId = id;
     }
 
     public User getUser() {
