@@ -52,36 +52,33 @@ public class AdminPanel extends JPanel {
 
         String nomComplet = (user != null ? user.getLastname() + " " + user.getName() : "");
         String nomMaj = nomComplet.toUpperCase();
-        JLabel nameLabel = new JLabel("Bonjour, " + nomMaj);
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        nameLabel.setForeground(new Color(60, 63, 65));
-
-        leftPanel.add(iconLabel);
-        leftPanel.add(nameLabel);
-
-        // Partie droite : rôle
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 24, 18));
-        rightPanel.setOpaque(false);
-
         String roleText = "";
         Color roleColor = Color.RED;
         if (user != null) {
             String role = user.getRole().toString().toUpperCase();
             roleText = role;
             if ("ADMIN".equals(role)) {
-                roleColor = new Color(255, 0, 0); // Rouge foncé
-            } else {
-                roleColor = new Color(255, 99, 71); // Rouge clair (tomato)
+                roleColor = new Color(220, 20, 60); // Rouge vif pour admin
+            } else if ("ASSISTANT".equals(role)) {
+                roleColor = new Color(255, 140, 0); // Orange pour assistant
             }
         }
-        JLabel roleLabel = new JLabel(roleText);
-        roleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        roleLabel.setForeground(roleColor);
+        // Affiche le nom complet suivi du rôle entre parenthèses, le rôle coloré
+        JLabel nameLabel = new JLabel();
+        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        nameLabel.setForeground(new Color(60, 63, 65));
+        // Utilisation de HTML pour colorer le rôle
+        nameLabel.setText("Bonjour, " + nomMaj + " <span style='color:" +
+                (roleColor == null ? "#000" : String.format("#%02x%02x%02x", roleColor.getRed(), roleColor.getGreen(), roleColor.getBlue())) +
+                ";'>(" + roleText + ")</span>");
+        nameLabel.setText("<html>Bonjour, " + nomMaj + " <span style='color:" +
+                (roleColor == null ? "#000" : String.format("#%02x%02x%02x", roleColor.getRed(), roleColor.getGreen(), roleColor.getBlue())) +
+                ";'>(" + roleText + ")</span></html>");
 
-        rightPanel.add(roleLabel);
+        leftPanel.add(iconLabel);
+        leftPanel.add(nameLabel);
 
         headerPanel.add(leftPanel, BorderLayout.WEST);
-        headerPanel.add(rightPanel, BorderLayout.EAST);
 
         add(headerPanel, BorderLayout.NORTH);
 
@@ -98,7 +95,12 @@ public class AdminPanel extends JPanel {
         tabbedPane.addTab("Accueil", UIManager.getIcon("FileView.homeFolderIcon"), new WelcomeAdminPanel(), "Accueil");
         tabbedPane.addTab("Activités", UIManager.getIcon("FileView.directoryIcon"), new ActivityAdminPanel(), "Gestion des activités");
         tabbedPane.addTab("Adhérents", UIManager.getIcon("FileView.fileIcon"), new AdherentsAdminPanel(), "Gestion des adhérents");
-        tabbedPane.addTab("Paiements", UIManager.getIcon("FileView.hardDriveIcon"), new PaiementsAdminPanel(), "Gestion des paiements");
+        tabbedPane.addTab("Paiements", UIManager.getIcon("FileView.hardDriveIcon"), new ParametresPaiementAdminPanel(), "Gestion des paiements");
+
+        // Ajout du 5ème onglet "Assistants" uniquement pour les admins
+        if (user != null && user.getRole() == User.Role.admin) {
+            tabbedPane.addTab("Assistants", UIManager.getIcon("FileView.computerIcon"), new AssistantAdminPanel(), "Gestion des assistants");
+        }
 
         tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
             @Override

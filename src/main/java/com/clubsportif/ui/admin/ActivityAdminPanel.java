@@ -19,11 +19,11 @@ public class ActivityAdminPanel extends JPanel {
     public ActivityAdminPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel: Add button + search bar + search button
+        // Top panel: Add button + search bar + search button + edit button
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         JButton addButton = new JButton("Ajouter");
         addButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        addButton.setPreferredSize(new Dimension(100, 40));
+        addButton.setPreferredSize(new Dimension(100, 35));
         addButton.setBackground(new Color(40, 167, 69)); // Vert Bootstrap
         addButton.setForeground(Color.WHITE);
         addButton.setFocusPainted(false);
@@ -48,23 +48,125 @@ public class ActivityAdminPanel extends JPanel {
 
         searchField = new JTextField(18);
         searchField.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        searchField.setPreferredSize(new Dimension(200, 36));
+        searchField.setPreferredSize(new Dimension(200, 35));
 
         // Permettre la recherche avec la touche Entrée
         searchField.addActionListener(this::searchActivities);
 
         JButton searchButton = new JButton("Rechercher");
         searchButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        searchButton.setPreferredSize(new Dimension(120, 40));
+        searchButton.setPreferredSize(new Dimension(120, 35));
         searchButton.setBackground(new Color(255, 255, 255));
         searchButton.setFocusPainted(false);
         searchButton.setToolTipText("Rechercher");
 
         searchButton.addActionListener(this::searchActivities);
 
+        // Nouveau bouton "Éditer activité" orange
+        JButton editButton = new JButton("Éditer activité");
+        editButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        editButton.setPreferredSize(new Dimension(160, 35));
+        editButton.setBackground(new Color(255, 140, 0)); // Orange
+        editButton.setForeground(Color.WHITE);
+        editButton.setFocusPainted(false);
+        editButton.setToolTipText("Modifier l'activité sélectionnée");
+
+        editButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner une activité à éditer.", "Avertissement", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int activityId = (int) tableModel.getValueAt(selectedRow, 0);
+            Activity activity = activityService.getActivityById(activityId);
+            if (activity == null) {
+                JOptionPane.showMessageDialog(this, "Activité introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame) {
+                JFrame frame = (JFrame) window;
+                JDialog dialog = new JDialog(frame, "Gestion de l'activité", true);
+
+                // Panel vertical avec les boutons
+                JPanel buttonPanel = new JPanel();
+                buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+                buttonPanel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
+                buttonPanel.setBackground(Color.WHITE);
+
+                JButton modifierButton = new JButton("Modifier activité");
+                modifierButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                modifierButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                modifierButton.setBackground(new Color(100, 149, 237));
+                modifierButton.setForeground(Color.WHITE);
+                modifierButton.setFocusPainted(false);
+                modifierButton.setMaximumSize(new Dimension(220, 40));
+                modifierButton.setPreferredSize(new Dimension(220, 40));
+                modifierButton.addActionListener(ev -> {
+                    // Ouvre le panel de modification
+                    JDialog modifDialog = new JDialog(frame, "Modifier une activité", true);
+                    modifDialog.setContentPane(new CreateActivityPanel(activity, () -> {
+                        modifDialog.dispose();
+                        dialog.dispose();
+                        loadActivities(null);
+                    }));
+                    modifDialog.pack();
+                    modifDialog.setLocationRelativeTo(frame);
+                    modifDialog.setVisible(true);
+                });
+
+                JButton gererInscrButton = new JButton("Gérer les inscriptions");
+                gererInscrButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                gererInscrButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                gererInscrButton.setBackground(new Color(60, 179, 113));
+                gererInscrButton.setForeground(Color.WHITE);
+                gererInscrButton.setFocusPainted(false);
+                gererInscrButton.setMaximumSize(new Dimension(220, 40));
+                gererInscrButton.setPreferredSize(new Dimension(220, 40));
+                gererInscrButton.addActionListener(ev -> {
+                    // À compléter : ouvrir la gestion des inscriptions pour cette activité
+                    JOptionPane.showMessageDialog(dialog, "Gestion des inscriptions à implémenter.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                });
+
+                JButton supprimerButton = new JButton("Supprimer activité");
+                supprimerButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                supprimerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                supprimerButton.setBackground(new Color(220, 53, 69));
+                supprimerButton.setForeground(Color.WHITE);
+                supprimerButton.setFocusPainted(false);
+                supprimerButton.setMaximumSize(new Dimension(220, 40));
+                supprimerButton.setPreferredSize(new Dimension(220, 40));
+                supprimerButton.addActionListener(ev -> {
+                    int confirm = JOptionPane.showConfirmDialog(dialog,
+                            "Êtes-vous sûr de vouloir supprimer cette activité ?",
+                            "Confirmation de suppression",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        activityService.deleteActivityById(activityId);
+                        JOptionPane.showMessageDialog(dialog, "Activité supprimée.", "Suppression", JOptionPane.INFORMATION_MESSAGE);
+                        dialog.dispose();
+                        loadActivities(null);
+                    }
+                });
+
+                buttonPanel.add(modifierButton);
+                buttonPanel.add(Box.createVerticalStrut(18));
+                buttonPanel.add(gererInscrButton);
+                buttonPanel.add(Box.createVerticalStrut(18));
+                buttonPanel.add(supprimerButton);
+
+                dialog.setContentPane(buttonPanel);
+                dialog.pack();
+                dialog.setLocationRelativeTo(frame);
+                dialog.setVisible(true);
+            }
+        });
+
         topPanel.add(addButton);
         topPanel.add(searchField);
         topPanel.add(searchButton);
+        topPanel.add(editButton);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -123,6 +225,7 @@ public class ActivityAdminPanel extends JPanel {
     }
 
     // --- Panel interne pour création d'activité ---
+    // Panel interne pour création/modification d'activité
     static class CreateActivityPanel extends JPanel {
         private JLabel idLabel;
         private JTextField nomField;
@@ -130,9 +233,17 @@ public class ActivityAdminPanel extends JPanel {
         private JTextField maxParticipantsField;
         private JTextArea descriptionArea;
         private Runnable onSuccess;
+        private Activity activityToEdit;
 
+        // Création
         public CreateActivityPanel(Runnable onSuccess) {
+            this(null, onSuccess);
+        }
+
+        // Modification
+        public CreateActivityPanel(Activity activityToEdit, Runnable onSuccess) {
             this.onSuccess = onSuccess;
+            this.activityToEdit = activityToEdit;
             setLayout(new BorderLayout(10, 10));
             setPreferredSize(new Dimension(400, 340));
 
@@ -147,7 +258,7 @@ public class ActivityAdminPanel extends JPanel {
             // ID généré automatiquement (affiché en haut, non éditable)
             gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 1;
             formPanel.add(new JLabel("ID (auto):"), gbc);
-            idLabel = new JLabel(getNextActivityIdText());
+            idLabel = new JLabel(activityToEdit != null ? String.valueOf(activityToEdit.getActivityId()) : getNextActivityIdText());
             idLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
             gbc.gridx = 1;
             formPanel.add(idLabel, gbc);
@@ -183,11 +294,19 @@ public class ActivityAdminPanel extends JPanel {
             gbc.gridx = 1;
             formPanel.add(descScroll, gbc);
 
+            // Pré-remplir si modification
+            if (activityToEdit != null) {
+                nomField.setText(activityToEdit.getNom());
+                tarifField.setText(activityToEdit.getTarif() != null ? activityToEdit.getTarif().toString() : "");
+                maxParticipantsField.setText(activityToEdit.getMaxParticipants() != null ? activityToEdit.getMaxParticipants().toString() : "");
+                descriptionArea.setText(activityToEdit.getDescription() != null ? activityToEdit.getDescription() : "");
+            }
+
             // Bouton de confirmation
             gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            JButton confirmButton = new JButton("Créer l'activité");
-            confirmButton.setBackground(new Color(40, 167, 69));
+            JButton confirmButton = new JButton(activityToEdit == null ? "Créer l'activité" : "Enregistrer les modifications");
+            confirmButton.setBackground(activityToEdit == null ? new Color(40, 167, 69) : new Color(255, 140, 0));
             confirmButton.setForeground(Color.WHITE);
             confirmButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
             confirmButton.setFocusPainted(false);
@@ -207,12 +326,20 @@ public class ActivityAdminPanel extends JPanel {
                 try {
                     BigDecimal tarif = new BigDecimal(tarifStr);
                     int max = Integer.parseInt(maxStr);
-
-                    Activity activity = new Activity(nom, tarif, max, desc);
                     ActivityService service = new ActivityService();
-                    service.createActivity(activity);
 
-                    JOptionPane.showMessageDialog(this, "Activité créée avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    if (activityToEdit == null) {
+                        Activity activity = new Activity(nom, tarif, max, desc);
+                        service.createActivity(activity);
+                        JOptionPane.showMessageDialog(this, "Activité créée avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        activityToEdit.setNom(nom);
+                        activityToEdit.setTarif(tarif);
+                        activityToEdit.setMaxParticipants(max);
+                        activityToEdit.setDescription(desc);
+                        service.updateActivity(activityToEdit);
+                        JOptionPane.showMessageDialog(this, "Activité modifiée avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    }
 
                     if (onSuccess != null) onSuccess.run();
 
@@ -222,7 +349,7 @@ public class ActivityAdminPanel extends JPanel {
                         window.dispose();
                     }
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Erreur lors de la création : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Erreur lors de la sauvegarde : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
             });
 

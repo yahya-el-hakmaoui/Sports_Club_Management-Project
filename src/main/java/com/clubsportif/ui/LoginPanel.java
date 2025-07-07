@@ -37,18 +37,37 @@ public class LoginPanel extends JPanel {
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         headerPanel.setOpaque(false);
 
-        // Logo musculation (dessiné)
+        // Logo musculation (plus beau, haltère stylisé)
         JLabel logoLabel = new JLabel(new Icon() {
             public int getIconWidth() { return 60; }
             public int getIconHeight() { return 60; }
             public void paintIcon(Component c, Graphics g, int x, int y) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Barre centrale
+                g2.setColor(new Color(80, 80, 80));
+                g2.fillRoundRect(x + 18, y + 27, 24, 6, 6, 6);
+
+                // Poids gauche (extérieur)
                 g2.setColor(new Color(100, 149, 237));
-                g2.fillRoundRect(x + 10, y + 25, 40, 10, 8, 8); // barre
+                g2.fillRoundRect(x + 6, y + 20, 8, 20, 8, 8);
+                // Poids gauche (intérieur)
                 g2.setColor(new Color(60, 63, 65));
-                g2.fillRoundRect(x + 5, y + 20, 10, 20, 8, 8); // poids gauche
-                g2.fillRoundRect(x + 45, y + 20, 10, 20, 8, 8); // poids droite
+                g2.fillRoundRect(x + 12, y + 23, 6, 14, 6, 6);
+
+                // Poids droite (extérieur)
+                g2.setColor(new Color(100, 149, 237));
+                g2.fillRoundRect(x + 46, y + 20, 8, 20, 8, 8);
+                // Poids droite (intérieur)
+                g2.setColor(new Color(60, 63, 65));
+                g2.fillRoundRect(x + 42, y + 23, 6, 14, 6, 6);
+
+                // Reflet sur les poids
+                g2.setColor(new Color(180, 220, 255, 120));
+                g2.fillRoundRect(x + 7, y + 22, 3, 8, 3, 3);
+                g2.fillRoundRect(x + 54, y + 22, 3, 8, 3, 3);
+
                 g2.dispose();
             }
         });
@@ -171,6 +190,12 @@ public class LoginPanel extends JPanel {
         User user = authService.authenticate(username, password);
         if (user == null) {
             messageLabel.setText("Identifiants incorrects.");
+            return;
+        }
+
+        // Bloquer la connexion si l'adhérent ou l'assistant est archivé
+        if ((user.getRole() == User.Role.adherent || user.getRole() == User.Role.assistant) && user.isArchived()) {
+            messageLabel.setText("Votre compte a été archivé. Veuillez contacter l'administration.");
             return;
         }
 
