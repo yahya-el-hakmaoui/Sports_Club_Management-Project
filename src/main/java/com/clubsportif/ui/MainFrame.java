@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
     private void initComponents() {
         setTitle("Gestion Club Sportif");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(1100, 650);
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();

@@ -98,7 +98,12 @@ public class AdminPanel extends JPanel {
         tabbedPane.addTab("Accueil", UIManager.getIcon("FileView.homeFolderIcon"), new WelcomeAdminPanel(), "Accueil");
         tabbedPane.addTab("Activités", UIManager.getIcon("FileView.directoryIcon"), new ActivityAdminPanel(), "Gestion des activités");
         tabbedPane.addTab("Adhérents", UIManager.getIcon("FileView.fileIcon"), new AdherentsAdminPanel(), "Gestion des adhérents");
-        tabbedPane.addTab("Paiements", UIManager.getIcon("FileView.hardDriveIcon"), new PaiementsAdminPanel(), "Gestion des paiements");
+        tabbedPane.addTab("Paiements", UIManager.getIcon("FileView.hardDriveIcon"), new ParametresPaiementsAdminPanel(), "Gestion des paiements");
+
+        // Ajout de l'onglet Assistant uniquement pour les admins
+        if (user != null && user.getRole() == com.clubsportif.model.User.Role.admin) {
+            tabbedPane.addTab("Assistant", UIManager.getIcon("FileView.computerIcon"), new AssistantAdminPanel(), "Gestion des assistants");
+        }
 
         tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
             @Override

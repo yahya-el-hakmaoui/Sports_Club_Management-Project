@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-public class AdherentsAdminPanel extends JPanel {
+public class AssistantAdminPanel extends JPanel {
     private JTextField searchField;
     private DefaultTableModel tableModel;
     private JTable table;
@@ -18,27 +18,26 @@ public class AdherentsAdminPanel extends JPanel {
     private JButton toggleArchiveButton;
     private String currentSearch = null;
 
-    public AdherentsAdminPanel() {
+    public AssistantAdminPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel: Add button + toggle archive + search bar + search button + edit button
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         JButton addButton = new JButton("Ajouter");
         addButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
         addButton.setPreferredSize(new Dimension(100, 40));
-        addButton.setBackground(new Color(40, 167, 69)); // Vert Bootstrap
+        addButton.setBackground(new Color(40, 167, 69));
         addButton.setForeground(Color.WHITE);
         addButton.setFocusPainted(false);
-        addButton.setToolTipText("Ajouter un adhérent");
+        addButton.setToolTipText("Ajouter un assistant");
 
-        // Implémentation du bouton Ajouter
+        // Action à compléter selon la logique métier
         addButton.addActionListener(e -> {
             Window window = SwingUtilities.getWindowAncestor(this);
             Frame parentFrame = window instanceof Frame ? (Frame) window : null;
-            JDialog dialog = new JDialog(parentFrame, "Ajouter un adhérent", true);
-            dialog.setContentPane(new CreateAdherentPanel(() -> {
+            JDialog dialog = new JDialog(parentFrame, "Ajouter un assistant", true);
+            dialog.setContentPane(new CreateAssistantPanel(() -> {
                 dialog.dispose();
-                loadAdherents(currentSearch); // Rafraîchir la liste après ajout
+                loadAssistants(currentSearch); // Rafraîchir la liste après ajout
             }));
             dialog.setMinimumSize(new Dimension(600, 520));
             dialog.pack();
@@ -46,27 +45,25 @@ public class AdherentsAdminPanel extends JPanel {
             dialog.setVisible(true);
         });
 
-        // Bouton pour basculer entre actifs et archives
         toggleArchiveButton = new JButton("Voir archives");
         toggleArchiveButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
         toggleArchiveButton.setPreferredSize(new Dimension(130, 40));
-        toggleArchiveButton.setBackground(new Color(100, 149, 237)); // Bleu
+        toggleArchiveButton.setBackground(new Color(100, 149, 237));
         toggleArchiveButton.setForeground(Color.WHITE);
         toggleArchiveButton.setFocusPainted(false);
-        toggleArchiveButton.setToolTipText("Afficher les adhérents archivés");
+        toggleArchiveButton.setToolTipText("Afficher les assistants archivés");
 
         toggleArchiveButton.addActionListener(e -> {
             showArchived = !showArchived;
             toggleArchiveButton.setText(showArchived ? "Voir actifs" : "Voir archives");
-            toggleArchiveButton.setToolTipText(showArchived ? "Afficher les adhérents actifs" : "Afficher les adhérents archivés");
-            loadAdherents(currentSearch);
+            toggleArchiveButton.setToolTipText(showArchived ? "Afficher les assistants actifs" : "Afficher les assistants archivés");
+            loadAssistants(currentSearch);
         });
 
         searchField = new JTextField(18);
         searchField.setFont(new Font("Segoe UI", Font.BOLD, 16));
         searchField.setPreferredSize(new Dimension(200, 36));
-        // Recherche sur entrée clavier
-        searchField.addActionListener(this::searchAdherents);
+        searchField.addActionListener(this::searchAssistants);
 
         JButton searchButton = new JButton("Rechercher");
         searchButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -74,22 +71,20 @@ public class AdherentsAdminPanel extends JPanel {
         searchButton.setBackground(new Color(255, 255, 255));
         searchButton.setFocusPainted(false);
         searchButton.setToolTipText("Rechercher");
-        // Recherche sur clic bouton
-        searchButton.addActionListener(this::searchAdherents);
+        searchButton.addActionListener(this::searchAssistants);
 
-        JButton editButton = new JButton("Éditer adhérent");
+        JButton editButton = new JButton("Éditer assistant");
         editButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
         editButton.setPreferredSize(new Dimension(170, 40));
-        editButton.setBackground(new Color(255, 140, 0)); // Orange
+        editButton.setBackground(new Color(255, 140, 0));
         editButton.setForeground(Color.WHITE);
         editButton.setFocusPainted(false);
-        editButton.setToolTipText("Éditer l'adhérent sélectionné");
+        editButton.setToolTipText("Éditer l'assistant sélectionné");
 
-        // ActionListener à compléter plus tard
         editButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Veuillez sélectionner un adhérent à éditer.", "Aucune sélection", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner un assistant à éditer.", "Aucune sélection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int userId = (int) tableModel.getValueAt(selectedRow, 0);
@@ -97,20 +92,19 @@ public class AdherentsAdminPanel extends JPanel {
 
             Window window = SwingUtilities.getWindowAncestor(this);
             Frame parentFrame = window instanceof Frame ? (Frame) window : null;
-            JDialog dialog = new JDialog(parentFrame, "Éditer adhérent", true);
+            JDialog dialog = new JDialog(parentFrame, "Éditer assistant", true);
             dialog.setLayout(new BorderLayout());
             JPanel buttonPanel = new JPanel();
-            buttonPanel.setLayout(new GridLayout(5, 1, 10, 10));
+            buttonPanel.setLayout(new GridLayout(3, 1, 10, 10));
             buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-            JButton modifierBtn = new JButton("Modifier adhérent");
+            JButton modifierBtn = new JButton("Modifier assistant");
             modifierBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
             modifierBtn.setBackground(new Color(100, 149, 237));
             modifierBtn.setForeground(Color.WHITE);
             modifierBtn.setFocusPainted(false);
 
-            // Bouton archiver/activer selon l'état de l'adhérent
-            String archiverLabel = user.isArchived() ? "Activer adhérent" : "Archiver adhérent";
+            String archiverLabel = user.isArchived() ? "Activer assistant" : "Archiver assistant";
             Color archiverColor = user.isArchived() ? new Color(40, 167, 69) : new Color(255, 193, 7);
             JButton archiverBtn = new JButton(archiverLabel);
             archiverBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -118,27 +112,15 @@ public class AdherentsAdminPanel extends JPanel {
             archiverBtn.setForeground(Color.WHITE);
             archiverBtn.setFocusPainted(false);
 
-            JButton gererInscrBtn = new JButton("Gérer inscriptions");
-            gererInscrBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
-            gererInscrBtn.setBackground(new Color(60, 179, 113));
-            gererInscrBtn.setForeground(Color.WHITE);
-            gererInscrBtn.setFocusPainted(false);
-
-            JButton gererPaiementsBtn = new JButton("Gérer paiements");
-            gererPaiementsBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
-            gererPaiementsBtn.setBackground(new Color(70, 130, 180));
-            gererPaiementsBtn.setForeground(Color.WHITE);
-            gererPaiementsBtn.setFocusPainted(false);
-
-            JButton supprimerBtn = new JButton("Supprimer adhérent");
+            JButton supprimerBtn = new JButton("Supprimer assistant");
             supprimerBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
             supprimerBtn.setBackground(new Color(220, 53, 69));
             supprimerBtn.setForeground(Color.WHITE);
             supprimerBtn.setFocusPainted(false);
 
-            // Implémentation du bouton Modifier adhérent avec changement de mot de passe
+            // Modifier assistant avec changement de mot de passe
             modifierBtn.addActionListener(ev -> {
-                JDialog editDialog = new JDialog(dialog, "Modifier l'adhérent", true);
+                JDialog editDialog = new JDialog(dialog, "Modifier l'assistant", true);
                 editDialog.setLayout(new BorderLayout());
                 JPanel formPanel = new JPanel(new GridBagLayout());
                 formPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
@@ -199,7 +181,7 @@ public class AdherentsAdminPanel extends JPanel {
                 formPanel.add(adresseField, gbc);
 
                 gbc.gridx = 0; gbc.gridy++;
-                formPanel.add(new JLabel("Date de naissance (YYYY-MM-DD):"), gbc);
+                formPanel.add(new JLabel("Date de nais (YYYY-MM-DD):"), gbc);
                 JTextField dateNaissanceField = new JTextField(user.getDateNaissance() != null ? user.getDateNaissance().toString() : "");
                 dateNaissanceField.setPreferredSize(fieldSize);
                 gbc.gridx = 1;
@@ -252,8 +234,8 @@ public class AdherentsAdminPanel extends JPanel {
 
                     userService.updateUser(user);
 
-                    JOptionPane.showMessageDialog(editDialog, "Adhérent modifié avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
-                    loadAdherents(currentSearch);
+                    JOptionPane.showMessageDialog(editDialog, "Assistant modifié avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    loadAssistants(currentSearch);
                     editDialog.dispose();
                     dialog.dispose();
                 });
@@ -266,47 +248,35 @@ public class AdherentsAdminPanel extends JPanel {
 
             archiverBtn.addActionListener(ev -> {
                 if (user.isArchived()) {
-                    int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous activer cet adhérent ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous activer cet assistant ?", "Confirmation", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         user.setArchived(false);
                         userService.updateUser(user);
-                        loadAdherents(currentSearch);
+                        loadAssistants(currentSearch);
                         dialog.dispose();
                     }
                 } else {
-                    int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous vraiment archiver cet adhérent ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous vraiment archiver cet assistant ?", "Confirmation", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         user.setArchived(true);
                         userService.updateUser(user);
-                        loadAdherents(currentSearch);
+                        loadAssistants(currentSearch);
                         dialog.dispose();
                     }
                 }
             });
 
-            gererInscrBtn.addActionListener(ev -> {
-                // TODO: ouvrir un panel de gestion des inscriptions
-                JOptionPane.showMessageDialog(dialog, "Action Gérer inscriptions pour : " + user.getLastname() + " " + user.getName());
-            });
-
-            gererPaiementsBtn.addActionListener(ev -> {
-                // TODO: ouvrir un panel de gestion des paiements
-                JOptionPane.showMessageDialog(dialog, "Action Gérer paiements pour : " + user.getLastname() + " " + user.getName());
-            });
-
             supprimerBtn.addActionListener(ev -> {
-                int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous vraiment supprimer cet adhérent ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(dialog, "Voulez-vous vraiment supprimer cet assistant ?", "Confirmation", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     userService.deleteUser(user);
-                    loadAdherents(currentSearch);
+                    loadAssistants(currentSearch);
                     dialog.dispose();
                 }
             });
 
             buttonPanel.add(modifierBtn);
             buttonPanel.add(archiverBtn);
-            buttonPanel.add(gererInscrBtn);
-            buttonPanel.add(gererPaiementsBtn);
             buttonPanel.add(supprimerBtn);
 
             dialog.add(buttonPanel, BorderLayout.CENTER);
@@ -323,7 +293,6 @@ public class AdherentsAdminPanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Colonnes : ID, Username, Nom, Prénom, Email, Téléphone, Statut
         String[] columns = {"ID", "Nom d'utilisateur", "Nom", "Prénom", "Email", "Téléphone", "Statut"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -334,27 +303,25 @@ public class AdherentsAdminPanel extends JPanel {
         table = new JTable(tableModel);
         table.setRowHeight(28);
 
-        // ScrollPane pour la table
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Charger les adhérents dans la table (par défaut : actifs)
-        loadAdherents(null);
+        loadAssistants(null);
     }
 
-    private void searchAdherents(ActionEvent e) {
+    private void searchAssistants(ActionEvent e) {
         String search = searchField.getText().trim();
         currentSearch = search.isEmpty() ? null : search;
-        loadAdherents(currentSearch);
+        loadAssistants(currentSearch);
     }
 
-    private void loadAdherents(String search) {
+    private void loadAssistants(String search) {
         tableModel.setRowCount(0);
         List<User> users = showArchived ? userService.getArchivedUsers() : userService.getNotArchivedUsers();
         for (User user : users) {
-            if (user.getRole() == User.Role.adherent) {
+            if (user.getRole() == User.Role.assistant) {
                 if (search != null) {
                     String searchLower = search.toLowerCase();
                     boolean match = user.getUsername().toLowerCase().contains(searchLower)
@@ -377,8 +344,7 @@ public class AdherentsAdminPanel extends JPanel {
         }
     }
 
-    // --- Panel interne pour création d'adhérent ---
-    static class CreateAdherentPanel extends JPanel {
+    static class CreateAssistantPanel extends JPanel {
         private JTextField usernameField;
         private JPasswordField passwordField;
         private JTextField nomField;
@@ -389,9 +355,9 @@ public class AdherentsAdminPanel extends JPanel {
         private JTextField dateNaissanceField;
         private Runnable onSuccess;
 
-        public CreateAdherentPanel(Runnable onSuccess) {
+        public CreateAssistantPanel(Runnable onSuccess) {
             this.onSuccess = onSuccess;
-            setLayout(new BorderLayout(5, 5));
+            setLayout(new BorderLayout(10, 10));
             setPreferredSize(new Dimension(560, 480));
 
             JPanel formPanel = new JPanel();
@@ -462,7 +428,7 @@ public class AdherentsAdminPanel extends JPanel {
 
             gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            JButton confirmButton = new JButton("Créer l'adhérent");
+            JButton confirmButton = new JButton("Créer l'assistant");
             confirmButton.setBackground(new Color(40, 167, 69));
             confirmButton.setForeground(Color.WHITE);
             confirmButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -504,14 +470,14 @@ public class AdherentsAdminPanel extends JPanel {
                     user.setTelephone(telephone);
                     user.setAdresse(adresse);
                     user.setDateNaissance(dateNaissance);
-                    user.setRole(User.Role.adherent);
+                    user.setRole(User.Role.assistant);
                     user.setArchived(false);
                     user.setDateInscription(java.time.LocalDate.now());
 
                     UserService service = new UserService();
                     service.createUser(user);
 
-                    JOptionPane.showMessageDialog(this, "Adhérent créé avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Assistant créé avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
 
                     if (onSuccess != null) onSuccess.run();
 
