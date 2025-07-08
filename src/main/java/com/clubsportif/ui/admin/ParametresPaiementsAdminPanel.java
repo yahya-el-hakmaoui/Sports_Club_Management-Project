@@ -36,12 +36,12 @@ public class ParametresPaiementsAdminPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
 
         gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(new JLabel("Frais annuel de base (€) :"), gbc);
+        formPanel.add(new JLabel("Frais annuel de base (DH) :"), gbc);
         gbc.gridx = 1;
         formPanel.add(fraisAnnuelField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
-        formPanel.add(new JLabel("Frais mensuel de base (€) :"), gbc);
+        formPanel.add(new JLabel("Frais mensuel de base (DH) :"), gbc);
         gbc.gridx = 1;
         formPanel.add(fraisMensuelField, gbc);
 

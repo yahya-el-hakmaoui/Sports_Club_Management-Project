@@ -62,7 +62,17 @@ public class InscriptionDao {
     // ➤ Liste des inscriptions actives d'un utilisateur
     public List<Inscription> getActiveInscriptionsByUser(User user) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Inscription i WHERE i.user = :user AND i.active = true";
+            String hql = "FROM Inscription i JOIN FETCH i.activity WHERE i.user = :user AND i.active = true";
+            Query<Inscription> query = session.createQuery(hql, Inscription.class);
+            query.setParameter("user", user);
+            return query.list();
+        }
+    }
+
+    // ➤ Liste de toutes les inscriptions d'un utilisateur (actives et inactives)
+    public List<Inscription> getAllInscriptionsByUser(User user) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Inscription i JOIN FETCH i.activity WHERE i.user = :user";
             Query<Inscription> query = session.createQuery(hql, Inscription.class);
             query.setParameter("user", user);
             return query.list();

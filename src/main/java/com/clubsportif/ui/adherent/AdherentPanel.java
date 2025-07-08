@@ -73,9 +73,9 @@ public class AdherentPanel extends JPanel {
         UIManager.put("TabbedPane.contentAreaColor", Color.WHITE);
 
         // Ajout des onglets avec icônes
-        tabbedPane.addTab("Profil", UIManager.getIcon("FileView.fileIcon"), new ProfilPanel(), "Voir le profil");
+        tabbedPane.addTab("Profil", UIManager.getIcon("FileView.fileIcon"), new ProfilPanel(user), "Voir le profil");
         tabbedPane.addTab("Activités", UIManager.getIcon("FileView.directoryIcon"), new ActivityPanel(user), "Voir les activités");
-        tabbedPane.addTab("Paiement", UIManager.getIcon("FileView.hardDriveIcon"), new PaiementPanel(), "Gérer les paiements");
+        tabbedPane.addTab("Paiement", UIManager.getIcon("FileView.hardDriveIcon"), new PaiementPanel(user), "Gérer les paiements");
 
         // Largeur personnalisée des onglets (gauche)
         tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {

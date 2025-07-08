@@ -285,13 +285,24 @@ public class AdherentsAdminPanel extends JPanel {
             });
 
             gererInscrBtn.addActionListener(ev -> {
-                // TODO: ouvrir un panel de gestion des inscriptions
-                JOptionPane.showMessageDialog(dialog, "Action Gérer inscriptions pour : " + user.getLastname() + " " + user.getName());
+                Window parentWindow = SwingUtilities.getWindowAncestor(this);
+                Frame parentFrameInscriptions = parentWindow instanceof Frame ? (Frame) parentWindow : null;
+                JDialog inscriptionsDialog = new JDialog(parentFrameInscriptions, "Gérer inscriptions", true);
+                inscriptionsDialog.setContentPane(new InscriptionsAdherentAdminPanel(user));
+                inscriptionsDialog.setSize(this.getWidth() > 0 ? this.getWidth() : 800, this.getHeight() > 0 ? this.getHeight() : 600);
+                inscriptionsDialog.setLocationRelativeTo(this);
+                inscriptionsDialog.setVisible(true);
             });
 
             gererPaiementsBtn.addActionListener(ev -> {
-                // TODO: ouvrir un panel de gestion des paiements
-                JOptionPane.showMessageDialog(dialog, "Action Gérer paiements pour : " + user.getLastname() + " " + user.getName());
+                // Utilise un nom de variable différent pour éviter le conflit
+                Window paiementWindow = SwingUtilities.getWindowAncestor(this);
+                Frame parentFramePaiement = paiementWindow instanceof Frame ? (Frame) paiementWindow : null;
+                JDialog paiementDialog = new JDialog(parentFramePaiement, "Gérer paiements", true);
+                paiementDialog.setContentPane(new PaiementsAdherentAdminPanel(user));
+                paiementDialog.setSize(this.getWidth(), this.getHeight());
+                paiementDialog.setLocationRelativeTo(this);
+                paiementDialog.setVisible(true);
             });
 
             supprimerBtn.addActionListener(ev -> {

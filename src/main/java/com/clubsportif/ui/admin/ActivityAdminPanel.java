@@ -197,8 +197,18 @@ public class ActivityAdminPanel extends JPanel {
             });
 
             gererInscrBtn.addActionListener(ev -> {
-                // TODO: ouvrir un panel de gestion des inscriptions
-                JOptionPane.showMessageDialog(dialog, "Action Gérer inscriptions pour l'activité : " + activity.getNom());
+                // Ouvre une fenêtre modale avec InscriptionsActivityAdminPanel, même taille que ActivityAdminPanel
+                Window parentWindow = SwingUtilities.getWindowAncestor(this);
+                Frame parentFrameInscriptions = parentWindow instanceof Frame ? (Frame) parentWindow : null;
+                JDialog inscriptionsDialog = new JDialog(parentFrameInscriptions, "Gérer inscriptions", true);
+                InscriptionsActivityAdminPanel panel = new InscriptionsActivityAdminPanel(activity);
+                panel.setPreferredSize(ActivityAdminPanel.this.getSize());
+                inscriptionsDialog.setContentPane(panel);
+                inscriptionsDialog.pack();
+                inscriptionsDialog.setSize(ActivityAdminPanel.this.getWidth() > 0 ? ActivityAdminPanel.this.getWidth() : 800,
+                                           ActivityAdminPanel.this.getHeight() > 0 ? ActivityAdminPanel.this.getHeight() : 600);
+                inscriptionsDialog.setLocationRelativeTo(ActivityAdminPanel.this);
+                inscriptionsDialog.setVisible(true);
             });
 
             supprimerBtn.addActionListener(ev -> {
@@ -256,19 +266,14 @@ public class ActivityAdminPanel extends JPanel {
     private void loadActivities(String search) {
         tableModel.setRowCount(0);
         List<Activity> activities = activityService.getAllActivities();
+        com.clubsportif.service.InscriptionService inscriptionService = new com.clubsportif.service.InscriptionService();
         for (Activity activity : activities) {
             if (search != null && !activity.getNom().toLowerCase().contains(search.toLowerCase())) {
                 continue;
             }
-            int adherents = 0;
+            // Compte le nombre d'inscriptions actives pour cette activité
+            long adherents = inscriptionService.countActiveInscriptionsForActivity(activity);
             Integer max = activity.getMaxParticipants();
-            try {
-                if (activity.getInscriptions() != null) {
-                    adherents = activity.getInscriptions().size();
-                }
-            } catch (Exception ex) {
-                adherents = 0;
-            }
             String adherentsStr = (max != null && max > 0) ? (adherents + "/" + max) : String.valueOf(adherents);
             BigDecimal tarif = activity.getTarif();
             tableModel.addRow(new Object[]{

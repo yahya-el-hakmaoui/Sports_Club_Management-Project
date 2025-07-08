@@ -42,6 +42,11 @@ public class InscriptionService {
         return inscriptionDao.getActiveInscriptionsByUser(user);
     }
 
+    // Obtenir la liste de toutes les inscriptions d'un utilisateur (actives et inactives)
+    public List<Inscription> getAllInscriptionsByUser(User user) {
+        return inscriptionDao.getAllInscriptionsByUser(user);
+    }
+
     // Obtenir la liste des inscriptions pour une activité donnée
     public List<Inscription> getInscriptionsByActivity(Activity activity) {
         return inscriptionDao.getInscriptionsByActivity(activity);
