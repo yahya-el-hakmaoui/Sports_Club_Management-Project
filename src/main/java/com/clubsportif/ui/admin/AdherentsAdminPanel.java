@@ -463,8 +463,8 @@ public class AdherentsAdminPanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Table avec colonnes principales
-        String[] columns = {"ID", "Nom", "Prénom", "Nom d'utilisateur", "Email", "Téléphone", "Archivée"};
+        // Table avec colonnes principales (username déplacé entre ID et Nom)
+        String[] columns = {"ID", "Nom d'utilisateur", "Nom", "Prénom", "Email", "Téléphone", "Archivée"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -505,9 +505,9 @@ public class AdherentsAdminPanel extends JPanel {
             }
             tableModel.addRow(new Object[]{
                 user.getUserId(),
+                user.getUsername(),
                 user.getLastname(),
                 user.getName(),
-                user.getUsername(),
                 user.getEmail(),
                 user.getTelephone(),
                 user.isArchived() ? "Oui" : "Non"
